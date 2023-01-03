@@ -22,8 +22,13 @@ uint32_t delayMS;
 #define SENSOR 33
 #define LED 26
 
+#define uS_to_sec 1000000
+#define time_to_sleep 5
+
 void setup() {
+
    Serial.begin(9600);
+   esp_sleep_enable_timer_wakeup(uS_to_sec*time_to_sleep);
   // Initialize device.
   dht.begin();
   Serial.println(F("DHTxx Unified Sensor Example"));
@@ -52,9 +57,7 @@ void setup() {
   // Set delay between sensor readings based on sensor details.
   delayMS = sensor.min_delay / 1000;
   pinMode(LED, OUTPUT);
-}
 
-void loop() {
   delay(delayMS);
   // Get temperature event and print its value.
   sensors_event_t event;
@@ -77,4 +80,11 @@ void loop() {
     Serial.print(event.relative_humidity);
     Serial.println(F("%"));
   }
+
+  Serial.flush();
+  esp_deep_sleep_start();
+}
+
+void loop() {
+  
 }
